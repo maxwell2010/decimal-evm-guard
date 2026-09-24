@@ -31,8 +31,9 @@ curl -fsSLo /tmp/install-decimal-guardian.sh https://github.com/maxwell2010/deci
 sudo bash /tmp/install-decimal-guardian.sh
 ```
 
-The short config defaults to Decimal mainnet (chain ID 75 and its contract
-center), local EVM RPC, and the built-in signature thresholds. Override
+The example config shows the signature window, pause thresholds and timing
+controls. It defaults to Decimal mainnet (chain ID 75 and its contract
+center) and local EVM RPC. Override
 `chain_id` and `contract_center` together for another network. Optional
 `telegram.bot_token` and `telegram.user_id` send one alert after a confirmed
 validator pause; leave both `null` to disable alerts.
