@@ -1,13 +1,18 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
+import re
+from dataclasses import dataclass, field
 from pathlib import Path
 from urllib.parse import urlsplit
 
 
 class ConfigError(ValueError):
     pass
+
+
+MAINNET_CHAIN_ID = 75
+MAINNET_CONTRACT_CENTER = "0xc108715a06f76caa96fa2c943ebf05159c29a87d"
 
 
 @dataclass(frozen=True)
@@ -28,6 +33,8 @@ class Config:
     block_timeout_seconds: int = 30
     max_lag: int = 3
     cooldown_seconds: int = 900
+    telegram_bot_token: str | None = field(default=None, repr=False)
+    telegram_user_id: int | None = None
 
     @property
     def guard_references(self) -> tuple[str, str]:
@@ -84,14 +91,18 @@ def load_config(path: Path) -> Config:
     if not isinstance(raw, dict):
         raise ConfigError("configuration must be a JSON object")
     try:
+        chain_id = int(raw.get("chain_id", MAINNET_CHAIN_ID))
+        telegram = raw.get("telegram", {})
+        if not isinstance(telegram, dict):
+            raise ConfigError("telegram must be an object")
         references = tuple(_url(url, "reference") for url in raw["references"])
         cfg = Config(
             node_name=str(raw["node_name"]),
             enabled=raw.get("enabled", False),
-            evm_rpc=_url(raw["evm_rpc"], "EVM RPC"),
-            contract_center=str(raw["contract_center"]),
-            chain_id=int(raw["chain_id"]),
-            key_file=Path(raw["key_file"]),
+            evm_rpc=_url(raw.get("evm_rpc", "http://127.0.0.1:8545"), "EVM RPC"),
+            contract_center=str(raw.get("contract_center", MAINNET_CONTRACT_CENTER if chain_id == MAINNET_CHAIN_ID else "")),
+            chain_id=chain_id,
+            key_file=Path(raw.get("key_file", "/etc/decimal-guardian/validator.key")),
             state_dir=Path(raw.get("state_dir", "/var/lib/decimal-guardian")),
             consensus_address=str(raw["consensus_address"]),
             references=references,
@@ -102,6 +113,8 @@ def load_config(path: Path) -> Config:
             block_timeout_seconds=int(raw.get("block_timeout_seconds", 30)),
             max_lag=int(raw.get("max_lag", 3)),
             cooldown_seconds=int(raw.get("cooldown_seconds", 900)),
+            telegram_bot_token=telegram.get("bot_token") or None,
+            telegram_user_id=telegram.get("user_id"),
         )
     except (KeyError, TypeError, ValueError) as exc:
         raise ConfigError(f"invalid configuration field: {exc}") from exc
@@ -123,4 +136,11 @@ def load_config(path: Path) -> Config:
     if (not 1 <= cfg.poll_seconds <= 300 or cfg.block_timeout_seconds < 5
             or cfg.max_lag < 0 or cfg.cooldown_seconds < 0):
         raise ConfigError("invalid timing")
+    if (cfg.telegram_bot_token is None) != (cfg.telegram_user_id is None):
+        raise ConfigError("telegram.bot_token and telegram.user_id must be set together")
+    if cfg.telegram_bot_token is not None:
+        if not isinstance(cfg.telegram_bot_token, str) or not re.fullmatch(r"[0-9]+:[A-Za-z0-9_-]+", cfg.telegram_bot_token):
+            raise ConfigError("invalid telegram.bot_token")
+        if isinstance(cfg.telegram_user_id, bool) or not isinstance(cfg.telegram_user_id, int) or cfg.telegram_user_id <= 0:
+            raise ConfigError("telegram.user_id must be a positive integer")
     return cfg

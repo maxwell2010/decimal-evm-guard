@@ -7,6 +7,7 @@ from functools import lru_cache
 
 from . import rpc
 from .config import Config
+from .notify import NotificationError, send_validator_offline
 from .validator import ValidatorProvider
 
 
@@ -103,6 +104,13 @@ def run_forever(cfg: Config, provider: ValidatorProvider) -> None:
                 if not provider.paused():
                     result = provider.set_paused(True)
                     LOG.warning("validator paused after missed signatures: tx=%s", result.tx_hash)
+                    if result.status == "confirmed" and cfg.telegram_bot_token is not None:
+                        try:
+                            send_validator_offline(
+                                cfg.telegram_bot_token, cfg.telegram_user_id, cfg.node_name, report, result.tx_hash
+                            )
+                        except NotificationError as exc:
+                            LOG.warning("validator offline notification failed: %s", exc)
                 last_action = time.monotonic()
         except (GuardError, rpc.RpcError, KeyError, ValueError, TypeError) as exc:
             LOG.error("guard sample rejected: %s", exc)
