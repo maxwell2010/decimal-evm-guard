@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+*.egg-info/
+.coverage
+.env
+*.local
+config.json
+state.json
+*.key
+*.pem
+validator.key
+dist/
