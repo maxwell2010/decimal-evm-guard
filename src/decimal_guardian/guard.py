@@ -106,9 +106,7 @@ def run_forever(cfg: Config, provider: ValidatorProvider) -> None:
                     LOG.warning("validator paused after missed signatures: tx=%s", result.tx_hash)
                     if result.status == "confirmed" and cfg.telegram_bot_token is not None:
                         try:
-                            send_validator_offline(
-                                cfg.telegram_bot_token, cfg.telegram_user_id, cfg.node_name, report, result.tx_hash
-                            )
+                            send_validator_offline(cfg, report, result.tx_hash)
                         except NotificationError as exc:
                             LOG.warning("validator offline notification failed: %s", exc)
                 last_action = time.monotonic()

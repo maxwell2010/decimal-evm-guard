@@ -27,8 +27,15 @@ def test_config_round_trip(cfg, tmp_path):
     assert load_config(path) == cfg
 
 
-def test_short_example_uses_mainnet_defaults(tmp_path):
+def test_example_shows_signature_settings_and_uses_mainnet_defaults(tmp_path):
     data = json.loads(Path("config.example.json").read_text(encoding="utf-8"))
+    assert {name: data[name] for name in (
+        "window_blocks", "max_missed", "max_consecutive_missed", "poll_seconds",
+        "block_timeout_seconds", "max_lag", "cooldown_seconds"
+    )} == {
+        "window_blocks": 24, "max_missed": 8, "max_consecutive_missed": 6,
+        "poll_seconds": 5, "block_timeout_seconds": 30, "max_lag": 3, "cooldown_seconds": 900,
+    }
     data["key_file"] = str(tmp_path / "validator.key")
     data["state_dir"] = str(tmp_path / "state")
     path = tmp_path / "config.json"

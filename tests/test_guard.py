@@ -60,7 +60,7 @@ def test_telegram_alert_only_after_confirmed_pause(monkeypatch, cfg):
             return ActionResult("confirmed", "0xabc")
     with pytest.raises(StopLoop):
         run_forever(settings, Provider())
-    assert messages == [("123:secret", 456, "test-validator", report, "0xabc")]
+    assert messages == [(settings, report, "0xabc")]
 
 
 def test_no_telegram_alert_when_pause_was_already_done(monkeypatch, cfg):

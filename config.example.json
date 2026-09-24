@@ -3,6 +3,13 @@
   "enabled": false,
   "consensus_address": "0000000000000000000000000000000000000000",
   "references": ["https://peer-one.example.org", "https://peer-two.example.org"],
+  "window_blocks": 24,
+  "max_missed": 8,
+  "max_consecutive_missed": 6,
+  "poll_seconds": 5,
+  "block_timeout_seconds": 30,
+  "max_lag": 3,
+  "cooldown_seconds": 900,
   "telegram": {
     "bot_token": null,
     "user_id": null
