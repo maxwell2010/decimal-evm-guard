@@ -6,10 +6,10 @@ command -v curl >/dev/null
 command -v sha256sum >/dev/null
 command -v python3 >/dev/null
 
-REPO="https://github.com/maxwell2010/decimal-guardian"
+REPO="https://github.com/maxwell2010/decimal-evm-guard"
 TAG="${1:-}"
 if [[ -z "$TAG" ]]; then
-  TAG="$(curl -fsSL --retry 3 https://api.github.com/repos/maxwell2010/decimal-guardian/releases/latest | python3 -c 'import json,sys; print(json.load(sys.stdin)["tag_name"])')"
+  TAG="$(curl -fsSL --retry 3 https://api.github.com/repos/maxwell2010/decimal-evm-guard/releases/latest | python3 -c 'import json,sys; print(json.load(sys.stdin)["tag_name"])')"
 fi
 [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "Invalid release tag" >&2; exit 1; }
 

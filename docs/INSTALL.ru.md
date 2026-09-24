@@ -11,10 +11,10 @@
 
 ## Установка
 
-Изучите исходный код и [релиз](https://github.com/maxwell2010/decimal-guardian/releases) перед установкой. Команды для последнего релиза:
+Изучите исходный код и [релиз](https://github.com/maxwell2010/decimal-evm-guard/releases) перед установкой. Команды для последнего релиза:
 
 ```bash
-curl -fsSLo /tmp/install-decimal-guardian.sh https://github.com/maxwell2010/decimal-guardian/releases/latest/download/install-release.sh
+curl -fsSLo /tmp/install-decimal-guardian.sh https://github.com/maxwell2010/decimal-evm-guard/releases/latest/download/install-release.sh
 sudo bash /tmp/install-decimal-guardian.sh
 ```
 

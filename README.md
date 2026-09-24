@@ -27,7 +27,7 @@ Read the [full installation and configuration guide](docs/INSTALL.ru.md).
 The release installer downloads a versioned archive and verifies SHA-256:
 
 ```bash
-curl -fsSLo /tmp/install-decimal-guardian.sh https://github.com/maxwell2010/decimal-guardian/releases/latest/download/install-release.sh
+curl -fsSLo /tmp/install-decimal-guardian.sh https://github.com/maxwell2010/decimal-evm-guard/releases/latest/download/install-release.sh
 sudo bash /tmp/install-decimal-guardian.sh
 ```
 
